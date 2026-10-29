@@ -1,0 +1,5 @@
+metodo,modelo,roc_auc_cv,segundos,configuraciones,hiperparametros
+Grid,CatBoost,0.8500291315727756,46.65,12,"{""model__depth"": 4, ""model__iterations"": 300, ""model__l2_leaf_reg"": 3, ""model__learning_rate"": 0.03}"
+TPE,CatBoost,0.8492645047977168,63.9,12,"{""model__iterations"": 700, ""model__depth"": 3, ""model__learning_rate"": 0.022059149678071027, ""model__l2_leaf_reg"": 4.297256589643226}"
+GA,CatBoost,0.8490016917286377,64.43,15,"{""model__iterations"": 250, ""model__depth"": 5, ""model__learning_rate"": 0.01460613816116407, ""model__l2_leaf_reg"": 9.780601164730804}"
+Random,CatBoost,0.8483041005573423,62.51,12,"{""model__depth"": 5, ""model__iterations"": 258, ""model__l2_leaf_reg"": 4.598748745437299, ""model__learning_rate"": 0.011347052875275399}"
