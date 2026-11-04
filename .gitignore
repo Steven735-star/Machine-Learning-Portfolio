@@ -1,0 +1,45 @@
+
+# ==========================================
+# LaTeX / Beamer - Archivos temporales
+# ==========================================
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.xdv
+*.dvi
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.ilg
+*.ind
+*.idx
+*.synctex.gz(busy)
+
+# ==========================================
+# Python / Jupyter
+# ==========================================
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+.DS_Store

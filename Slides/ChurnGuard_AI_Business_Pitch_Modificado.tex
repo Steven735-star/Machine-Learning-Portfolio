@@ -1,0 +1,204 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc}
+\usepackage{array}
+\usepackage{graphicx}
+
+% ---------- Paleta ----------
+\definecolor{navy}{HTML}{123755}
+\definecolor{blue}{HTML}{2374AC}
+\definecolor{teal}{HTML}{16877E}
+\definecolor{amber}{HTML}{D99423}
+\definecolor{red}{HTML}{BF4550}
+\definecolor{ink}{HTML}{263442}
+\definecolor{light}{HTML}{F1F6FA}
+\definecolor{muted}{HTML}{586D7D}
+\definecolor{grid}{HTML}{D5DEE6}
+
+% ---------- Tema (fondo claro) ----------
+\setbeamercolor{normal text}{fg=ink,bg=white}
+\setbeamersize{text margin left=0.9cm,text margin right=0.9cm}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{background canvas}{\vbox to\paperheight{\color{navy}\hrule height 0.16cm width\paperwidth\vfil}}
+\setbeamertemplate{frametitle}{\vspace{0.12cm}{\color{navy}\large\bfseries\insertframetitle}\par\vspace{-0.02cm}{\color{blue}\rule{1.4cm}{2pt}}\par\vspace{-0.05cm}}
+\setbeamertemplate{footline}{\hspace{0.9cm}{\color{muted}\scriptsize ChurnGuard AI \textbullet\ Business Pitch\hfill Aprendizaje Automático\ \ \textbullet\ \ \insertframenumber/5}\hspace{0.9cm}\vspace{0.22cm}}
+
+% ---------- Componentes ----------
+% Tarjeta con barra de acento: \card[color]{titulo}{texto}  (ocupa el ancho de la columna)
+\newcommand{\card}[3][blue]{\begin{tikzpicture}[baseline=(n.north)]
+  \node[anchor=north west,fill=light,text width=\dimexpr\linewidth-18pt\relax,inner xsep=9pt,inner ysep=4pt,align=left](n){%
+  {\color{navy}\bfseries\small #2}\par\vspace{0pt}{\color{ink}\footnotesize #3}};
+  \draw[#1,line width=3pt]([xshift=1.5pt]n.north west)--([xshift=1.5pt]n.south west);
+\end{tikzpicture}}
+% Indicador: \tile[ancho]{valor}{etiqueta}{detalle}
+\newcommand{\tile}[4][3cm]{\begin{tikzpicture}[baseline=(n.north)]
+  \node[anchor=north west,fill=light,minimum width=#1,inner ysep=3pt,align=center](n){%
+  {\color{navy}\fontsize{17}{19}\selectfont\bfseries #2}\\[0pt]{\color{ink}\footnotesize\bfseries #3}\\[-1pt]{\color{muted}\scriptsize #4}};
+  \draw[blue,line width=2pt](n.south west)--(n.south east);
+\end{tikzpicture}}
+\newcommand{\pill}[2]{\tikz[baseline=(X.base)]\node[rounded corners=3pt,fill=#1,inner xsep=8pt,inner ysep=4pt](X){\color{white}\scriptsize\bfseries #2};}
+\newcommand{\nota}[1]{{\color{muted}\scriptsize #1}}
+
+\begin{document}
+
+% =====================================================================
+% 1. PROBLEMA, SOLUCIÓN Y COMPRADOR
+% =====================================================================
+\begin{frame}[t]{Retener a tiempo: anticipar qué clientes se van a ir}
+\begin{columns}[T,onlytextwidth]
+\column{0.315\textwidth}\tile[\linewidth]{7.043}{clientes analizados}{Telco Customer Churn}
+\column{0.315\textwidth}\tile[\linewidth]{26,5\,\%}{abandono observado}{clase minoritaria}
+\column{0.315\textwidth}\tile[\linewidth]{2,1$\times$}{más eficiente que contactar al azar}{test aislado, umbral 0,35}
+\end{columns}
+\vspace{5pt}
+\begin{columns}[T,onlytextwidth]
+\column{0.315\textwidth}
+\card[red]{El problema}{Una operadora pierde 1 de cada 4 clientes. Contactar a toda la cartera es caro; sin priorizar, el presupuesto se gasta en quienes no se iban a ir y se pierde a los que sí.}
+\column{0.315\textwidth}
+\card[teal]{Nuestra solución}{\textbf{ChurnGuard AI} predice el riesgo de abandono, explica cada predicción con SHAP y LIME y simula campañas de retención con una lista priorizada.}
+\column{0.315\textwidth}
+\card[blue]{Comprador objetivo}{Gerencias de retención, experiencia de cliente y marketing de operadoras de telecomunicaciones e ISP: deciden a quién contactar y con qué presupuesto.}
+\end{columns}
+\vspace{7pt}
+\begin{center}
+\begin{tikzpicture}\node[fill=navy,text=white,inner xsep=14pt,inner ysep=6pt]{\small\bfseries De reaccionar a la pérdida $\rightarrow$ a priorizar la retención con evidencia};\end{tikzpicture}
+\end{center}
+\vfill
+\nota{La tasa de abandono describe el dataset; no es una estimación causal. El 2,1$\times$ se calcula sobre el conjunto de prueba.}
+\end{frame}
+
+% =====================================================================
+% 2. EVIDENCIA TÉCNICA
+% =====================================================================
+\begin{frame}[t]{Evidencia técnica: protocolo comparable y búsqueda rigurosa}
+\begin{columns}[T,onlytextwidth]
+\column{0.49\textwidth}
+{\color{navy}\small\bfseries 1. Seis modelos base (ROC-AUC, CV)}\par\vspace{1pt}
+\begin{tikzpicture}[x=1cm,y=0.4cm,font=\scriptsize]
+  \def\a{83.0}\def\b{85.2}\def\W{3.5}
+  \foreach \g in {83,84,85}{\draw[grid]({(\g-\a)/(\b-\a)*\W+2.4},-0.1)--({(\g-\a)/(\b-\a)*\W+2.4},6.0);
+    \node[muted,anchor=north] at ({(\g-\a)/(\b-\a)*\W+2.4},-0.1){\g\,\%};}
+  \foreach \i/\v/\l/\c in {0/83.37/LightGBM/muted,1/83.80/XGBoost/muted,2/84.35/CatBoost/teal,3/84.53/Random Forest/muted,4/84.58/Logistic Regression/muted,5/84.89/Stacking/blue}{
+    \node[anchor=east,text=ink] at (2.3,\i+0.5){\l};
+    \draw[\c!60,line width=1.2pt](2.4,\i+0.5)--({(\v-\a)/(\b-\a)*\W+2.4},\i+0.5);
+    \node[circle,fill=\c,inner sep=1.8pt] at ({(\v-\a)/(\b-\a)*\W+2.4},\i+0.5){};
+    \node[anchor=west,text=\c!80!black] at ({(\v-\a)/(\b-\a)*\W+2.4+0.13},\i+0.5){\v};}
+\end{tikzpicture}
+\column{0.49\textwidth}
+{\color{navy}\small\bfseries 2. Cuatro búsquedas sobre CatBoost}\par\vspace{1pt}
+\begin{tikzpicture}[x=1cm,y=0.4cm,font=\scriptsize]
+  \def\a{84.76}\def\b{85.02}\def\W{2.9}
+  \foreach \g in {84.8,84.9,85.0}{\draw[grid]({(\g-\a)/(\b-\a)*\W+2.7},-0.1)--({(\g-\a)/(\b-\a)*\W+2.7},4.0);
+    \node[muted,anchor=north] at ({(\g-\a)/(\b-\a)*\W+2.7},-0.1){\g};}
+  \foreach \i/\v/\l/\c in {0/84.83/Random Search/muted,1/84.90/Algoritmo genético/muted,2/84.93/TPE (bayesiano)/blue,3/85.00/Grid Search/teal}{
+    \node[anchor=east,text=ink] at (2.6,\i+0.5){\l};
+    \draw[\c!60,line width=1.2pt](2.7,\i+0.5)--({(\v-\a)/(\b-\a)*\W+2.7},\i+0.5);
+    \node[circle,fill=\c,inner sep=1.8pt] at ({(\v-\a)/(\b-\a)*\W+2.7},\i+0.5){};
+    \node[anchor=west,text=\c!80!black] at ({(\v-\a)/(\b-\a)*\W+2.7+0.13},\i+0.5){\v};}
+\end{tikzpicture}
+\end{columns}
+\vspace{6pt}
+\begin{columns}[T,onlytextwidth]
+\column{0.49\textwidth}
+\card[teal]{Elegido: CatBoost + Grid Search}{Stacking lidera la CV por solo 0,5 pp, pero es más complejo de explicar; CatBoost admite SHAP exacto de árboles. Las cuatro búsquedas difieren en décimas.}
+\column{0.49\textwidth}
+\card[blue]{NSGA-II: F1 frente a tiempo de inferencia}{Optimización multiobjetivo con frente de Pareto: muestra cuánta velocidad se cede por cada punto de F1 y permite elegir el compromiso.}
+\end{columns}
+\vfill
+\nota{Ejes recortados para apreciar diferencias de décimas. Mismas particiones, CV y modelo base en todas las búsquedas; test aislado.}
+\end{frame}
+
+% =====================================================================
+% 3. RESULTADOS EN TEST AISLADO
+% =====================================================================
+\begin{frame}[t]{Resultados en test aislado: detectamos 7 de cada 10 abandonos}
+\begin{center}
+\tile[2.5cm]{84,6\,\%}{ROC-AUC}{discriminación}\hspace{1pt}
+\tile[2.5cm]{71,9\,\%}{Recall}{abandonos detectados}\hspace{1pt}
+\tile[2.5cm]{56,5\,\%}{Precision}{alertas acertadas}\hspace{1pt}
+\tile[2.5cm]{63,3\,\%}{F1-score}{equilibrio P--R}\hspace{1pt}
+\tile[2.5cm]{77,9\,\%}{Accuracy}{referencial}
+\end{center}
+\vspace{2pt}
+\begin{columns}[T,onlytextwidth]
+\column{0.42\textwidth}
+{\color{navy}\small\bfseries Matriz de confusión}\ {\nota{(1.409 clientes de prueba)}}\par\vspace{5pt}
+\begin{tikzpicture}[font=\footnotesize,baseline=(c.north)]
+  \def\s{1.7}\def\h{1.05}
+  \node[anchor=north west,inner sep=0](c) at (0,0){};
+  \fill[teal!22] (1.1,0) rectangle (1.1+\s,-\h);
+  \fill[amber!30] (1.1+\s,0) rectangle (1.1+2*\s,-\h);
+  \fill[red!22]  (1.1,-\h) rectangle (1.1+\s,-2*\h);
+  \fill[teal!45] (1.1+\s,-\h) rectangle (1.1+2*\s,-2*\h);
+  \node[align=center] at (1.1+0.5*\s,-0.5*\h){{\large\bfseries 828}\\[-1pt]\tiny se quedan, bien\\[-2pt]\tiny clasificados};
+  \node[align=center] at (1.1+1.5*\s,-0.5*\h){{\large\bfseries 207}\\[-1pt]\tiny alertas\\[-2pt]\tiny innecesarias};
+  \node[align=center] at (1.1+0.5*\s,-1.5*\h){{\large\bfseries 105}\\[-1pt]\tiny abandonos\\[-2pt]\tiny no detectados};
+  \node[align=center] at (1.1+1.5*\s,-1.5*\h){{\large\bfseries 269}\\[-1pt]\tiny abandonos\\[-2pt]\tiny detectados};
+  \node[muted,anchor=east,align=right] at (1.05,-0.5*\h){\tiny Real:\\[-2pt]\tiny se queda};
+  \node[muted,anchor=east,align=right] at (1.05,-1.5*\h){\tiny Real:\\[-2pt]\tiny se va};
+  \node[muted,anchor=south] at (1.1+0.5*\s,0.03){\tiny Predice: se queda};
+  \node[muted,anchor=south] at (1.1+1.5*\s,0.03){\tiny Predice: se va};
+\end{tikzpicture}
+\column{0.54\textwidth}
+\card[teal]{Eficiencia comercial}{Contactando a 476 clientes (33,8\,\% de la prueba) se alcanzan 269 de 374 abandonos (72\,\%): \textbf{2,1 veces} la eficiencia del contacto aleatorio (26,5\,\%).}
+\par\vspace{4pt}
+\card[amber]{Costo de los errores}{105 abandonos no detectados y 207 contactos innecesarios. El umbral 0,35, elegido por CV, prioriza no perder clientes.}
+\end{columns}
+\vfill
+\nota{Con 26,5\,\% de abandono, Recall y F1 pesan más que Accuracy. Test aislado hasta la evaluación final.}
+\end{frame}
+
+% =====================================================================
+% 4. PRODUCTO Y DEMO
+% =====================================================================
+\begin{frame}[t]{ChurnGuard AI en acción: analiza, predice y decide}
+\vspace{3pt}
+\begin{columns}[T,onlytextwidth]
+\column{0.63\textwidth}
+\card[blue]{1. Analizar y comparar}{Explora segmentos, indicadores, seis modelos y métodos de optimización.}
+\par\vspace{7pt}
+\card[teal]{2. Predecir y explicar}{Estima el riesgo con CatBoost e interpreta las variables mediante SHAP y LIME.}
+\par\vspace{7pt}
+\card[amber]{3. Planificar la retención}{Prioriza clientes y simula escenarios de contacto, costos y beneficio comercial.}
+\par\vspace{8pt}
+\nota{El modelo se carga desde archivos: la aplicación no reentrena. SHAP y LIME no prueban causalidad.}
+
+\column{0.33\textwidth}
+\centering
+{\color{navy}\bfseries\small Pruébalo en vivo}\par\vspace{8pt}
+\fcolorbox{blue}{white}{\includegraphics[width=2.62cm]{img/qr_churnguard.png}}\par\vspace{9pt}
+{\color{navy}\bfseries\footnotesize Escanea para abrir el dashboard}\par\vspace{4pt}
+{\color{muted}\scriptsize Demo interactiva en Streamlit}\par
+\end{columns}
+\end{frame}
+
+% =====================================================================
+% 5. PROPUESTA COMERCIAL
+% =====================================================================
+\begin{frame}[t]{Propuesta comercial: piloto, servicio y condiciones de éxito}
+\begin{columns}[T,onlytextwidth]
+\column{0.315\textwidth}
+\card[blue]{Qué entregamos}{Suscripción anual con dashboard, priorización de clientes, simulador de campañas y lista exportable para el equipo comercial.}
+\par\vspace{4pt}
+\card[teal]{Cómo se implementa}{Piloto de 90 días con acompañamiento, definición de KPI, conexión con la operación comercial y revisión periódica de resultados.}
+
+\column{0.315\textwidth}
+\card[amber]{Modelo comercial}{Precio de referencia en la app: \textbf{USD 24.000/año}. El simulador permite ajustar tamaño de cartera, costo por contacto, margen retenido y porcentaje intervenido.}
+\par\vspace{4pt}
+\card[navy]{Qué decide el comprador}{A quién contactar, cuánto presupuesto asignar y qué escenarios generan mejor relación entre costo, cobertura y retención esperada.}
+
+\column{0.315\textwidth}
+\card[red]{Condiciones para escalar}{Validar privacidad y consentimiento, medir el éxito incremental con grupo control y monitorear deriva de datos y del modelo.}
+\par\vspace{4pt}
+\card[navy]{Solicitud final}{Aprobar un piloto controlado con métricas verificables para evaluar impacto comercial y viabilidad de adopción.}
+\end{columns}
+\vfill
+\nota{Los resultados del simulador son escenarios de negocio configurables; deben validarse con datos reales durante el piloto.}
+\end{frame}
+
+\end{document}
